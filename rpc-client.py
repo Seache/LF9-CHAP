@@ -10,10 +10,11 @@ s = xmlrpc.client.ServerProxy('http://localhost:8000')
 token = s.generateToken()
 print(token)
 
+username = input("Enter your username: ")
 password = input("Enter your password: ")
 hashValue = hashlib.sha256(str(password).encode('utf-8') + str(token).encode('utf-8')).hexdigest()
 print(hashValue)
-print (s.challenge(hashValue))
+print (s.challenge(username, hashValue))
 
 print (s.pow(2,3))  # Returns 2**3 = 8
 print (s.add(2,3))  # Returns 5
