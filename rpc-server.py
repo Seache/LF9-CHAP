@@ -29,13 +29,10 @@ userList.append( user('demoUser2', 5678) )
 userList.append( user('demoUser3', 9012) )
 
 # Create server
-server = SimpleXMLRPCServer(("localhost", 8000),
+server = SimpleXMLRPCServer(('localhost', 8000),
                             requestHandler=RequestHandler)
 server.register_introspection_functions()
 
-# Register pow() function; this will use the value of
-# pow.__name__ as the name, which is just 'pow'.
-server.register_function(pow)
 
 def generateToken():
     global currentToken
@@ -53,28 +50,27 @@ def challenge(username, hashValue):
             ownHashValue = hashlib.sha256(str(user.password).encode('utf-8') + str(currentToken).encode('utf-8')).hexdigest()
             # check if password is correct
             if(hashValue == ownHashValue):
-                return "Successfully logged in"
+                return 'loggedIn'
             else:
-                return "Could not log in"
+                return 'wrongPassword'
             break
     else:
-        return "User not found"
+        return 'userNotFound'
 
 server.register_function(challenge, 'challenge')
 
-# Register a function under a different name
-def adder_function(x,y):
+
+def addUp(x,y):
     return x + y
 
-server.register_function(adder_function, 'add')
+server.register_function(addUp, 'addUp')
 
-# Register an instance; all the methods of the instance are
-# published as XML-RPC methods (in this case, just 'div').
-class MyFuncs:
-    def div(self, x, y):
-        return x // y
 
-server.register_instance(MyFuncs())
+def subtract(x,y):
+    return x - y
+
+server.register_function(subtract, 'subtract')
+
 
 # Run the server's main loop
 server.serve_forever()
